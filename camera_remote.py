@@ -41,6 +41,7 @@ def parse_args():
         help='log level to use',
         required=False,
         type=str,
+        action='store',
         choices=['DEBUG', 'INFO', 'WARNING', 'ERROR', 'FATAL'],
         default='WARNING'
     )
@@ -51,6 +52,7 @@ def parse_args():
         help='ros camera topic',
         required=False,
         type=str,
+        action='store',
         default='camera/image_raw'
     )
     c_args = parser.parse_args()
@@ -74,6 +76,6 @@ async def main(host, port, log_level, topic):
 if __name__ == '__main__':
     try:
         args = parse_args()
-        asyncio.run(main(args.host, args.port, args.log))
+        asyncio.run(main(args.host, args.port, args.log, args.topic))
     except Exception as e:
         logging.error(f'failed to start server: {e}')
