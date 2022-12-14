@@ -40,7 +40,11 @@ rostopic list
 ```
 ### Noetic
 
+Tested & working
+
 ### Melodic
+
+Currently still testing with ROS Melodic
 
 ### To consider
 
