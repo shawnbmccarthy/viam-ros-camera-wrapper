@@ -71,9 +71,13 @@ to create custom sensors.
 
 1. log into [app.viam.com](https://app.viam.com)
 2. access the robot you configured, and go to the remotes tab
+
 ![remotes_create.png](images%2Fremotes_create.png)
+
 3. give the remote a name, for this example lets use `ros-camera-wrapper`, next select `Create Remote`, this will show the next page:
+
 ![remote_create_2.png](images%2Fremote_create_2.png)
+
 4. in the `Heading Info` text box enter `localhost:9090`, this is the default binding that [camera_remote.py](camera_remote.py) is configured for. Now click `Save Config` at the bottom of the page, a confirmation message will appear.
 
 Now that we have created our remote resource, we can start our proces
@@ -90,6 +94,7 @@ the output below:
 
 Now go back to [app.viam.com](https://app.viam.com) and select the `Control` tab of your robot and select `Sensors`, 
 here we can select `Get All Readings` to see the output
+
 ![control.png](images%2Fcontrol.png)
 
 To see how the code works view: [camera_remote.py](camera_remote.py) and [ros_camera.py](ros_camera.py)
