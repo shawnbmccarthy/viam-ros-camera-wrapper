@@ -88,6 +88,12 @@ the output below:
 2022-12-14 01:08:42,088         INFO    viam.rpc.server (server.py:81)  Serving on localhost:9090   
 ```
 
+Now go back to [app.viam.com](https://app.viam.com) and select the `Control` tab of your robot and select `Sensors`, 
+here we can select `Get All Readings` to see the output
+![control.png](images%2Fcontrol.png)
+
+To see how the code works view: [camera_remote.py](camera_remote.py) and [ros_camera.py](ros_camera.py)
+
 ### script usage
 Below are the options that can be used 
 
@@ -108,12 +114,6 @@ With no options the defaults are:
 * port = 9090
 * log = WARNING
 * topic = camera/image_raw
-
-Now go back to [app.viam.com](https://app.viam.com) and select the `Control` tab of your robot and select `Sensors`, 
-here we can select `Get All Readings` to see the output
-![control.png](images%2Fcontrol.png)
-
-To see how the code works view: [camera_remote.py](camera_remote.py) and [ros_camera.py](ros_camera.py)
 
 ## Further activities
 We can also configure our viam server to manage the remote process, ensuring that when viam server is running the remote server
