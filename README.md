@@ -80,13 +80,34 @@ Now that we have created our remote resource, we can start our proces
 ```shell
 # run from viam-simple-sensor
 ./camera_remote.sh -l DEBUG
-
 ```
+
 This will start a remote process with `DEBUG` log level. By default, only `WARNING` and above are logged, you should see
 the output below:
 ```shell
 2022-12-14 01:08:42,088         INFO    viam.rpc.server (server.py:81)  Serving on localhost:9090   
 ```
+
+### script usage
+Below are the options that can be used 
+
+```shell
+./camera_remote.sh -h
+usage: camera_remote.py [-h] [--host HOST] [--port PORT] [--log {DEBUG,INFO,WARNING,ERROR,FATAL}] [--topic TOPIC]
+
+options:
+  -h, --help            show this help message and exit
+  --host HOST, -n HOST  hostname/ip rpc server will bind to
+  --port PORT, -p PORT  port number to store
+  --log {DEBUG,INFO,WARNING,ERROR,FATAL}, -l {DEBUG,INFO,WARNING,ERROR,FATAL}
+                        log level to use
+  --topic TOPIC, -t TOPIC ros camera topic
+```
+With no options the defaults are:
+* host = localhost 
+* port = 9090
+* log = WARNING
+* topic = camera/image_raw
 
 Now go back to [app.viam.com](https://app.viam.com) and select the `Control` tab of your robot and select `Sensors`, 
 here we can select `Get All Readings` to see the output
