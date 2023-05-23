@@ -1,66 +1,66 @@
 import cv2
 import PIL
 import rospy
+
 from cv_bridge import CvBridge
 from sensor_msgs.msg import Image
-from viam.components.camera import Camera, DistortionParameters, IntrinsicParameters
+from typing import ClassVar, Mapping, Sequence, Any, Dict, Optional, cast
+from typing_extensions import Self
+from viam.module.types import Reconfigurable
+from viam.proto.app.robot import ComponentConfig
+from viam.proto.common import ResourceName
+from viam.resource.base import ResourceBase
+from viam.resource.types import Model, ModelFamily
+from viam.components.camera import Camera, DistortionParameters, IntrinsicParameters, RawImage
 
 
-class RosCamera(Camera):
-    def __init__(self, name, topic):
-        """
-        initialize our camera, ros node and ros subscriber
+class RosCamers(Base, Reconfigurable):
+    MODEL: ClassVar[Model] = Model(ModelFamily('viamlabs', 'ros'), 'roscamera')
 
-        :param name:
-        :param topic:
-        """
+    topic: str
+    props: Camera.Properties
+    image: PIL.Image
+
+    @classmethod
+    def new_camera(cls, config: ComponentConfig, dependencies: Mapping[ResourceName, ResourceBase]) -> Self:
+        camera = cls(RosCamera(config.name))
+        camera.reconfigure(config, dependencies)
+        return camera 
+
+    @classmethod
+    def validate_config(cls, config: ComponentConfig) -> Sequence[str]:
+        topic = config.attributes.fields['topic'].string_value
+        if topic == '':
+            raise Exception("A ros topic is required for roscamera component.")
+        return [topic]
+
+    def reconfigure(self, config: ComponentConfig, dependencies: Mapping[ResourceName, ResourceBase]) -> None:
+        topic = config.attributes.fields['topic'].string_value
+        self.topic = topic
         rospy.init_node('viam_camera_stream', anonymous=True)
         rospy.Subscriber(topic, Image, self.callback)
         self.props = Camera.Properties(
-            supports_pcd=False,
-            distortion_parameters=DistortionParameters(),
-            intrinsic_parameters=IntrinsicParameters()
+            supports_pcd = False,
+            distortion_parameters = DistortionParameters(),
+            intrinsic_parameters = IntrinsicParameters()
         )
-        self.image = None
-        super().__init__(name)
 
-    def callback(self, data):
-        """
-        the callback function used to pic up images off the queue, we ill then convert to a PNG image
-
-        :param data:
-        :return:
-        """
+    def image_callback(self, data) -> None:
         br = CvBridge()
-        tmp = br.imgmsg_to_cv2(data)
+        tmp = br.image_to_cv2(data)
         tmp = cv2.cvtColor(tmp, cv2.COLOR_BGR2RGB)
         self.image = PIL.Image.fromarray(tmp)
 
-    async def get_image(self, mime_type='', **kwargs):
-        """
-        get the next image, since the callback is updating the image from the ros topic we simply return
-        the updated image
-
-        return the image
-        :param mime_type:
-        :param kwargs:
-        :return:
-        """
+    async def get_image(
+        self,
+        mime_type: str = '',
+        timeout: Optional[float] = None,
+        **kwargs
+    ) -> Union[PIL.Image.Image, RawImage]:
         return self.image
 
-    async def get_point_cloud(self, **kwargs):
-        """
-        camera does not support point cloud
-        :param kwargs:
-        :return:
-        """
+    async def get_point_cloud(self, *, timeout: Optional[float] = None, **kwargs) -> Tuple[bytes, str]:
         return None
 
-    async def get_properties(self, **kwargs):
-        """
-        return supported properties
-
-        :param kwargs:
-        :return:
-        """
+    async def get_properties(*, timeout: Optional[float] = None, **kwargs) -> Camera.Properties:
         return self.props
