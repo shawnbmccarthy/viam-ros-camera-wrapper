@@ -56,10 +56,10 @@ When installing `viam-sdk` on jetson running ROS 1 Melodic, it will be required 
 
 ```shell
 git clone https://github.com/shawnbmccarthy/viam-ros-camera-wrapper
-cd viam-ros-camera-wrapper
+cd viam-components-camera-wrapper
 ./setup_venv.sh
 ```
-This will setup our python virtual environment and install the required packages
+This will install our python virtual environment and install the required packages
 
 ## Configure Robots remote resources
 
@@ -70,59 +70,42 @@ to create custom sensors.
 
 
 1. log into [app.viam.com](https://app.viam.com)
-2. access the robot you configured, and go to the remotes tab
+2. access the robot you configured, and go to the modules tab
+![module.png](images%2Fmodule.png)
 
-![remotes_create.png](images%2Fremotes_create.png)
+3. give the module a name, for this example lets use `ros-module` as the name, next set the executable to the run_module.sh (using the full path):
+![module_2.png](images%2Fmodule_2.png)
 
-3. give the remote a name, for this example lets use `ros-camera-wrapper`, next select `Create Remote`, this will show the next page:
+4. Now that we have created our module, we need to add the components, select `Components` tab
+![components.png](images/components.png)
 
-![remote_create_2.png](images%2Fremote_create_2.png)
+5. this module contains two components, a camera and a sensor. To add the camera enter:
+   1. enter general name for the camera component (`ros_camera_demo` or anything you prefer)
+   2. Select camera from the type drop down
+   3. enter `viamlabs:ros:camera` as the type
+   4. select create component
+   5. in the attributes window enter `{"topic": "ROS_CAMERA_TOPIC"}`, where `ROS_CAMERA_TOPIC` is the topic that produces images
+   6. select save
+6. to add the sensor component
+   1. enter general name for the sensor component (`ros_sensor_demo` or anything you prefer)
+   2. Select sensor from the type drop down
+   3. enter `viamlabs:ros:sensor` as the type
+   4. select create component
+   5. in the attributes window enter `{"topic": "ROS_SENSOR_TOPIC"}`, where `ROS_SENSOR_TOPIC` is the topic that produces images
+   6. select save
 
-4. in the `Heading Info` text box enter `localhost:9090`, this is the default binding that [camera_remote.py](camera_remote.py) is configured for. Now click `Save Config` at the bottom of the page, a confirmation message will appear.
-
-Now that we have created our remote resource, we can start our proces
-```shell
-# run from viam-simple-sensor
-./camera_remote.sh -l DEBUG
-```
-
-This will start a remote process with `DEBUG` log level. By default, only `WARNING` and above are logged, you should see
-the output below:
-```shell
-2022-12-14 01:08:42,088         INFO    viam.rpc.server (server.py:81)  Serving on localhost:9090   
-```
 
 Now go back to [app.viam.com](https://app.viam.com) and select the `Control` tab of your robot and select `Sensors`, 
 here we can select `Get All Readings` to see the output
+
+And go to the camera to view the image
 
 ![control.png](images%2Fcontrol.png)
 
 To see how the code works view: [camera_remote.py](camera_remote.py) and [ros_camera.py](ros_camera.py)
 
-### script usage
-Below are the options that can be used 
-
-```shell
-./camera_remote.sh -h
-usage: camera_remote.py [-h] [--host HOST] [--port PORT] [--log {DEBUG,INFO,WARNING,ERROR,FATAL}] [--topic TOPIC]
-
-options:
-  -h, --help            show this help message and exit
-  --host HOST, -n HOST  hostname/ip rpc server will bind to
-  --port PORT, -p PORT  port number to store
-  --log {DEBUG,INFO,WARNING,ERROR,FATAL}, -l {DEBUG,INFO,WARNING,ERROR,FATAL}
-                        log level to use
-  --topic TOPIC, -t TOPIC ros camera topic
-```
-With no options the defaults are:
-* host = localhost 
-* port = 9090
-* log = WARNING
-* topic = camera/image_raw
-
 ## Further activities
-We can also configure our viam server to manage the remote process, ensuring that when viam server is running the remote server
-will also run. 
+Testing and updates to add more topics
 
 # contact
 
